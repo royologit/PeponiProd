@@ -1,0 +1,94 @@
+.modal-header {
+    min-height: 50px;
+}
+
+.modal-v2 {
+    width: 50vw;
+}
+
+.modal-participant {
+    width: 95vw;
+}
+
+.modal-v2 .col-sm-12 {
+    margin-bottom: 10px;
+}
+
+.custom-input input {
+    line-height: 3;
+}
+
+.nopadding {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.period-margin {
+    margin: 2px;
+    padding: 0;
+}
+
+.period-delete-icon {
+    cursor: pointer;
+    padding-top: 4px;
+    font-size: 20px;
+}
+
+.skin-blue .main-header .navbar {
+    background-color: rgb(7,144,84) !important;
+}
+
+.skin-blue .main-header .logo {
+    background-color: rgb(7, 132, 77) !important;
+}
+
+.currencyinput {
+    border: 1px inset #ccc;
+}
+.currencyinput input {
+    border: 0;
+}
+
+input.spinner {
+    background-image: url('/images/spinner3.gif');
+    width: 50px;
+    height: auto;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #2a92b9!important;
+}
+
+.input-icon {
+    position: relative;
+}
+
+.input-icon > i {
+    position: absolute;
+    display: block;
+    transform: translate(0, -50%);
+    top: 50%;
+    pointer-events: none;
+    width: 25px;
+    text-align: center;
+    font-style: normal;
+}
+
+.input-icon > input {
+    padding-left: 25px;
+    padding-right: 0;
+}
+
+.input-icon-right > i {
+    right: 0;
+}
+
+.input-icon-right > input {
+    padding-left: 0;
+    padding-right: 25px;
+    text-align: right;
+}

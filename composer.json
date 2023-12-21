@@ -1,0 +1,14 @@
+{
+	"description" : "The CodeIgniter framework",
+	"name" : "codeigniter/framework",
+	"license": "MIT",
+	"require": {
+		"php": ">=5.2.4",
+		"fzaninotto/faker": "^1.5",
+		"nesbot/carbon": "^1.22",
+		"xendit/xendit-php": "^2.17"
+	},
+	"require-dev": {
+		"mikey179/vfsstream": "1.1.*"
+	}
+}
