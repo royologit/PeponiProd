@@ -206,7 +206,10 @@ $(window).on('scroll', function() {
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-T4DLHGVTHG');
+  gtag('config', 'G-T4DLHGVTHG', {
+    'page_title' : window.location.href
+  });
+  console.log(window.location.href);
 </script>
 
 <!-- BEGIN JIVOSITE CODE {literal} -->
