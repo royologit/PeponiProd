@@ -209,7 +209,6 @@ $(window).on('scroll', function() {
   gtag('config', 'G-T4DLHGVTHG', {
     'page_title' : window.location.href
   });
-  console.log(window.location.href);
 </script>
 
 <!-- BEGIN JIVOSITE CODE {literal} -->
