@@ -59,14 +59,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | the query builder class.
 */
 
+
+//untuk login
+//INSERT INTO `admin` (`admin_id`, `username`, `password`, `last_login`) VALUES (NULL, 'roy', '70328b821a82a48fed75afe2b73ecb1a', '2023-12-21 16:46:10')
+
 $active_group = 'default';
 $query_builder = TRUE;
 $db['default'] = [
     'dsn'          => '',
-    'hostname'      => defined('DB_HOST') ? DB_HOST : 'localhost',
-    'username'      => defined('DB_USER') ? DB_USER : 'peponitr_adhy',
-    'password'      => defined('DB_PASS') ? DB_PASS : 'adhyadmin',
-    'database'      => defined('DB_NAME') ? DB_NAME : 'peponitr_peponi',
+    'hostname'      =>'localhost',
+    'username'      =>'root',
+    'password'      => '',
+    'database'      => 'peponi_prod',
     'dbdriver'     => 'mysqli',
     'dbprefix'     => '',
     'pconnect'     => FALSE,
