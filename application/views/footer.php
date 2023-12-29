@@ -203,14 +203,15 @@ $(window).on('scroll', function() {
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-T4DLHGVTHG"></script>
 <script>
-  let currentUrl = new URL(window.location.href);
-  let path = currentUrl.pathname;
+  let currentUrlforGTAG = new URL(window.location.href);
+  let path = currentUrlforGTAG.pathname;
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
   gtag('config', 'G-T4DLHGVTHG', {
     'page_title' : path
   });
+  
 </script>
 
 <!-- BEGIN JIVOSITE CODE {literal} -->
