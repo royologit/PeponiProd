@@ -1,10 +1,12 @@
 @font-face {
-  font-family: twcenmt;
-  src: url(../fonts/tw-cen-mt.ttf);
+  /* font-family: twcenmt;
+  src: url(../fonts/tw-cen-mt.ttf); */
+  font-family: nunito;
+  src: url(../fonts/Nunito-VariableFont_wght.ttf);
 }
 
 *{
-  font-family: twcenmt;
+  font-family: nunito;
   outline:0;
 }
 
