@@ -151,16 +151,31 @@ class AdminController extends CI_Controller
         
         $this->form_validation->set_rules('variable', 'Variable', 'required');
 
-        if ($name_data == 'password'):
-                        $collection[$name_data] = md5($this->input->post($name_data)); else:
-                        if (!$check_image):
-                            $collection[$name_data] = $this->input->post($name_data); else:
-                            $upload_image = $name_data;
-        endif;
-        endif;
+        if($name_data == 'password'){
+            $collection += [$name_data => md5($this->input->post($name_data))];  
+        }else{
+            if (!$check_image){
+                if($collection == ''){
+                    $collection = [$name_data => $this->input->post($name_data)];
+                }else{
+                    $collection += [$name_data => $this->input->post($name_data)];
+                }
+            }else{
+                $upload_image = $name_data;
+            }
+        }
+
+        // if ($name_data == 'password'):
+        //                 $collection[$name_data] = md5($this->input->post($name_data)); else:
+        //                 if (!$check_image):
+        //                     $collection[$name_data] = $this->input->post($name_data); else:
+        //                     $upload_image = $name_data;
+        // endif;
+        // endif;
         endforeach;
         endforeach;
         endforeach;
+
         if ($this->form_validation->run()==false||$this->form_validation->run()==0):
         
             if ($method == 'edit' && $id != ''):
