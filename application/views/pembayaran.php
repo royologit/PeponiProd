@@ -145,7 +145,7 @@
                         <p class="radioOption-Item">
                             <input type="radio" name="method" class="method" value="CIMB" id="BannerType6" fee="5000" types="nominal" value="true" class="ng-valid ng-dirty ng-touched ng-empty" aria-invalid="false" style="">
                             <label for="BannerType6" style="padding-top: 7%;">
-                                <img style="width: 100%;" src="<?= base_url() ?>asset/img/cimb.png">
+                                <img style="width: 100%;" src="<?= base_url() ?>asset/img/CIMB.png">
                             </label>
                         </p>
                         <!-- <p class="radioOption-Item">
