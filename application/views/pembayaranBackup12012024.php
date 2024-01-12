@@ -29,7 +29,7 @@
         }
         div.radio-with-Icon p.radioOption-Item label:hover, div.radio-with-Icon p.radioOption-Item label:focus, div.radio-with-Icon p.radioOption-Item label:active {
             opacity: .5;
-            border: 3px solid #079054;
+            border: 1px solid #079054;
             color: #fff;
             margin: 0 !important;
         }
@@ -54,7 +54,7 @@
         div.radio-with-Icon p.radioOption-Item input[type="radio"]:checked ~ label {
             opacity: 1;
             border: none;
-            border: 3px solid #079054;
+            border: 1px solid #079054;
             color: #fff;
         }
         div.radio-with-Icon p.radioOption-Item input[type="radio"]:hover, div.radio-with-Icon p.radioOption-Item input[type="radio"]:focus, div.radio-with-Icon p.radioOption-Item input[type="radio"]:active {
@@ -62,26 +62,6 @@
         }
         div.radio-with-Icon p.radioOption-Item input[type="radio"] + label:before, div.radio-with-Icon p.radioOption-Item input[type="radio"] + label:after {
             margin: 0 !important;
-        }
-        @media only screen and (max-width: 600px) {
-            #btn-lanjutkan {
-                width: 100% !important;
-            }
-            div.radio-with-Icon p.radioOption-Item {
-                display: inline-block;
-                width: 100px;
-                height: auto;
-                box-sizing: border-box;
-                margin: 0px 5px;
-                border: none;
-            }
-            div.radio-with-Icon p.radioOption-Item img{
-                width: 100% !important;
-            }
-        }
-        div.radio-with-Icon p.radioOption-Item label img{
-            object-fit: contain;
-            height: 70px;
         }
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
@@ -95,13 +75,13 @@
                 <div class="col-md-8">
                     <div class="radio-with-Icon">
                         <h3><b>Metode Pembayaran</b></h3><br>
-                        <!-- <h4>Credit Card</h4>
+                        <h4>Credit Card</h4>
                         <p class="radioOption-Item">
                             <input type="radio" class="method" name="method" value="CREDIT_CARD" add="2000" fee="2.9" types="both" id="BannerType6" value="true" class="ng-valid ng-dirty ng-touched ng-empty" aria-invalid="false" style="">
                             <label for="BannerType6" style="padding-top: 7%;">
                                 <img style="width: 90%;" src="<?= base_url() ?>asset/img/logo_cc.PNG">
                             </label>
-                        </p> -->
+                        </p>
                         
 
                         <h4>Bank Transfer</h4>
@@ -142,24 +122,8 @@
                                 <img style="width: 60%;" src="<?= base_url() ?>asset/img/bri-logo.svg">
                             </label>
                         </p>
-                        <p class="radioOption-Item">
-                            <input type="radio" name="method" class="method" value="CIMB" id="BannerType6" fee="5000" types="nominal" value="true" class="ng-valid ng-dirty ng-touched ng-empty" aria-invalid="false" style="">
-                            <label for="BannerType6" style="padding-top: 7%;">
-                                <img style="width: 100%;" src="<?= base_url() ?>asset/img/cimb.png">
-                            </label>
-                        </p>
-                        <!-- <p class="radioOption-Item">
-                            <input type="radio" name="method" class="method" value="SAHABAT_SAMPOERNA" id="BannerType7" fee="5000" types="nominal" value="true" class="ng-valid ng-dirty ng-touched ng-empty" aria-invalid="false" style="">
-                            <label for="BannerType7" style="padding-top: 7%;">
-                                <img style="width: 70%;" src="<?= base_url() ?>asset/img/sp.png">
-                            </label>
-                        </p> -->
-                        <p class="radioOption-Item">
-                            <input type="radio" name="method" class="method" value="BJB" id="BannerType8" fee="5000" types="nominal" value="true" class="ng-valid ng-dirty ng-touched ng-empty" aria-invalid="false" style="">
-                            <label for="BannerType8" style="padding-top: 7%;">
-                                <img style="width: 45%" src="<?= base_url() ?>asset/img/bjb.svg">
-                            </label>
-                        </p>
+                    
+                    
                 </div>
                 <br>
             </div>
