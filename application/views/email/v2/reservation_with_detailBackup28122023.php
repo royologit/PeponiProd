@@ -12,19 +12,20 @@
         $orderData->order_line_id;
         $orderData->order_email;
 
-        $result = array();
-
-		foreach ($orderDetail as $item) {
-			$result[] = $item->order_detail_quantity . ' ' . $item->age_group_name;
-		}
-
-		$jumlahPeserta =  implode(', ', $result);
-
         $orderData->order_id;
         $productName;
         $orderData->package_name;
+        //$orderData->price;
         $detailPeserta = "";
-
+        $jumlahPeserta = 0;
+        foreach ($orderDetail as $index => $eachDetail) {
+            if ((count($orderDetail)-1 == $index)) {
+                $detailPeserta .= $eachDetail->order_detail_quantity . " " . $eachDetail->age_group_name;
+            } else {
+                $detailPeserta .= $eachDetail->order_detail_quantity . " " . $eachDetail->age_group_name . ", ";
+            }
+            $jumlahPeserta += $eachDetail->order_detail_quantity;
+        }
         date("d M Y", strtotime($invoiceData->due_date)) . ", 13.00";
         $downPayment = "Rp. " .CONVERT_TO_CURRENCY($invoiceData->price) . " x ".$invoiceData->quantity." orang";
         $totalInvoice = $invoiceData->total;
@@ -36,7 +37,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= $tripType ?></title>
 	<style>
-        /* @font-face {
+        @font-face {
             font-family: 'Tw Cen MT';
             src: url('<?= base_url()?>asset/fonts/TwCenMT-Regular.woff2') format('woff2'),
                 url('<?= base_url()?>asset/fonts/TwCenMT-Regular.woff') format('woff'),
@@ -74,16 +75,12 @@
                 url('<?= base_url()?>asset/fonts/TwCenMT-BoldItalic.svg#TwCenMT-BoldItalic') format('svg');
             font-weight: bold;
             font-style: italic;
-        } */
-        @font-face{
-            font-family: 'nunito';
-            src: url('<?= base_url()?>asset/fonts/Nunito-VariableFont_wght.ttf') format('truetype')
         }
 
-		body{font-family: 'nunito';font-size: 14pt;color: #000;line-height:15pt;letter-spacing:0.2px;margin:35px 50px 0;}
+		body{font-family: 'Tw Cen MT';font-size: 14pt;color: #000;line-height:15pt;letter-spacing:0.2px;margin:35px 50px 0;}
 		img{max-width: 100%;height: auto;}
-	    header{position: relative;display: block;vertical-align: middle;}
-	    header img.logo{width: 250px;height: auto;display: inline-block; position: relative; right: 45px;}
+	    header{position: relative;display: block;margin-bottom: 50px;vertical-align: middle;}
+	    header img.logo{width: 200px;height: auto;display: inline-block;}
 	    header ul{display: inline-block;float: right;margin-right: 15px;padding:0;}
 	    header ul li{display: inline-block;margin:0 5px;}
 	    header ul li img{width:30px;}
@@ -109,7 +106,30 @@
         footer{ margin-top: 50px}
 	    footer a{color: #fff !important;text-decoration: none;}
 	    footer a:hover{opacity: .75;transition: .4s all;-webkit-transition: .4s all;-moz-transition: .4s all;-o-transition: .4s all;}
-        .btn-bayar{
+		.btn {
+			display: inline-block;
+			padding: 6px 12px;
+			margin-bottom: 0;
+			font-size: 14px;
+			font-weight: normal;
+			line-height: 1.42857143;
+			text-align: center;
+			white-space: nowrap;
+			vertical-align: middle;
+			-ms-touch-action: manipulation;
+				touch-action: manipulation;
+			cursor: pointer;
+			-webkit-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+					user-select: none;
+			background-image: none;
+			border: 1px solid transparent;
+			border-radius: 4px;
+			background-color: "#089b58";
+			color:"white";
+		}
+		.btn-bayar{
             background-color: rgba(255,199,15,255);
             padding: 2vh;
             margin-top: 2vh;
@@ -120,101 +140,61 @@
             padding-left: 5vh;
             padding-right: 5vh;
             font-size: 2vh;
-            cursor: pointer;
+			cursor: pointer;
         }
-        .bayar-sekarang{
-			background-color: #089b58; 
-			color: white !important;
-			padding: 10px;
-			border-radius: 10px;
-			text-decoration: none !important;
-		}
-        .klik-disini{
-			color: #089b58 !important;
-			text-decoration: underline !important;
-		}
-        .warning{
-			background-color: orange;
-			padding: 5px;
-		}
-        .rincian-tagihan{
-            border-style: solid;
-            border-width: 5px;
-            border-radius: 10px;
-            border-color: #EAEAEA;
-            padding: 10px;
-        }
-        .logo-footer{
-			width: 100px;
-			float: right;
-			padding-top: 10px;
-		}
-        .rincian-reservasi{
-			background-color: #EAEAEA;
-			border-radius: 10px;
-			padding: 10px;
-		}
-    </style>
+	</style>
 </head>
 <body>
 
 	<header>
-		<img src="<?= base_url() ?>asset/img/logov2.png" alt="" class="logo">
+		<img src="<?= base_url() ?>asset/img/logo.png" alt="" class="logo">
+		<ul>
+			<li><a href="https://www.instagram.com/peponitravel/"><img src="<?= base_url() ?>asset/img/icon-instagram.png" alt=""></a></li>
+			<li><a href="https://www.facebook.com/peponitravel/"><img src="<?= base_url() ?>asset/img/icon-facebook.png" alt=""></a></li>
+		</ul>
 	</header>
-    <p>Halo, salam dari Peponi Travel.<br>
-    Berikut ini adalah rincian pembayaran Anda yang harus diselesaikan.
-    </p>
 
-    <div class="rincian-tagihan">
-        <p><b>Rincian Tagihan</b></p>
-        No Tagihan: <?= $invoiceData->id ?><br />
-        Jenis Pembayaran: <?= ucwords($invoiceData->invoice_type) ?><br/>
-        <!-- Jenis Pembayaran: <?= $invoiceData->description ?><br/> -->
-        Tagihan (per orang): Rp. <?= CONVERT_TO_CURRENCY(intval($invoiceData->total)/$jumlahPeserta) ?><br/>
-        <?php if ($invoiceData->discount > 0) { ?>
-            Diskon: Rp. <?= CONVERT_TO_CURRENCY($invoiceData->discount) ?><br />
-        <?php } ?>
-        Total Tagihan: Rp. <?= CONVERT_TO_CURRENCY($invoiceData->total-$invoiceData->discount) ?><br/>
-        Mohon segera melakukan pembayaran sebelum <b><?= date("d M Y \J\a\m 13:00 T", strtotime($invoiceData->due_date)) ?></b>
-        <br/><br/>
-        <p>
-            <a href="<?=$url_invoice?>" class="bayar-sekarang">Bayar Sekarang</a>
-        </p>
-        <p>
-            Apabila link diatas tidak berfungsi, mohon klik <a href="<?=$url_invoice?>" class="klik-disini">di sini</a> untuk melanjutkan pembayaran
-        </p>
-        <p class="warning"><img style="width: 20px; height: auto; float: left; padding-right: 5px;" src="<?= base_url() ?>images/information_icon.png">Reservasi Anda dapat dibatalkan otomatis oleh sistem apabila gagal melakukan pembayaran pada batas waktu ini</p>
+	Terima kasih atas Reservasi Anda. Kami tidak sabar untuk menemani perjalanan liburan Anda ke destinasi favorit.
+	<h1><span>Rincian Reservasi</span></h1>
+	<p>
+		<b>Pemesanan</b><br />
+		Nama Lengkap: <?= $orderData->order_name ?><br />
+		No. Telp / Whatsapp: <?= $orderData->order_phone ?><br />
+		E-Mail: <?= $orderData->order_email ?>
+	</p>
 
-    </div>
-    <p style="padding-left: 10px;"><b>Rincian Reservasi</b></p>
-    <div class="rincian-reservasi">
-		<b>Pemesan</b><br/>
-		Nama Lengkap: <?= $orderData->order_name ?><br/>
-		No. Telp / Whatsapp: <?= $orderData->order_phone ?><br/>
-		E-Mail: <?= $orderData->order_email ?><br/>
-		<br/>
-		<b>Pesanan</b></b><br/>
-		No. Pesanan: <?= $orderData->order_id ?><br/>
-		Nama Trip: <?= $productName ?><br/>
-		Destinasi: <?= $orderData->package_name ?><br/>
-		Biaya Trip: Rp. <?= CONVERT_TO_CURRENCY($orderData->order_price) ?><br/>
-		Jumlah Peserta: <?= $jumlahPeserta ?><br/>
-	</div>
-<!--
-	Penting:
-	<ol>
-		<li>Mohon isi berita acara pembayaran transfer dengan "Nama Lengkap" sesuai yang Anda daftarkan</li>
-		<li>Mohon kirimkan bukti transfer ke Customer Service Peponi Travel untuk ditukarkan dengan tanda terima</li>
-        <li>Mohon abaikan pesan ini apabila Anda telah melakukan pembayaran</li>
-	</ol>-->
+	<p>
+		<b>Pesanan</b><br />
+		No Pesanan: <?= $orderData->order_id ?><br />
+		Nama Trip: <?= $productName ?><br />
+		Destinasi: <?= $orderData->package_name ?><br />
+		Biaya Trip: Rp. <?= CONVERT_TO_CURRENCY($orderData->order_price) ?><br />
+		Jumlah Peserta: <?= $jumlahPeserta ?>
+	</p>
+
+	<h1><span>Rincian Pembayaran</span></h1>
+	<p>
+		Untuk melanjutkan reservasi Anda, Mohon segera melakukan pembayaran Down Payment (DP) sebelum <i class="green"><b><?= date("d M Y \J\a\m H:i T", strtotime($invoiceData->due_date)) ?> WIB</b></i><br />
+		*Anda mungkin harus melakukan reservasi ulang apabila gagal melakukan pembayaran pada batas waktu ini
+	</p>
+	<p>
+		Rincian Down Payment (DP):  <?= $downPayment ?><br />
+		<i class="green"><b>Total Jumlah yang harus dibayarkan: Rp. <?= CONVERT_TO_CURRENCY($totalInvoice) ?></b></i>
+	</p>
+	<p>
+        Pembayaran melalui Halaman Pembayaran Peponi Travel dengan menekan tombol dibawah ini<br />
+		<a href="<?=$url_invoice?>" style="cursor:pointer!important"><button class="btn-bayar" style="cursor:pointer!important">Bayar Sekarang</button></a>
+	</p>
+	<hr>
+
 
 	<footer>
-    <img src="<?= base_url() ?>images/logo_footer.png" class="logo-footer">
-	    <p><b>Butuh Bantuan ?</b></p>
+		<p><b>Butuh Bantuan ?</b></p>
 		<p>
-			Hubungi Customer Service kami melalui Whatsapp <a href="tel:081289315151">0812-8931-5151</a> 
+			Hubungi Customer Service kami melalui:<br />
+			Whatsapp <a href="tel:081289315151">0812-8931-5151</a> | E-mail <a href="mailto:cs@peponitravel.com">cs@peponitravel.com</a>
 		</p>
-		<p>Pelajari terms & condition di sini: <a href="https://peponitravel.com/terms-conditions#TC" target="_blank">www.peponitravel.com/terms-conditions</a></p>
+		<p><a href="http://www.peponitravel.com">www.peponitravel.com</a></p>
 	</footer>
 
 

@@ -19,27 +19,16 @@ class Pdf extends TCPDF
         // die($invoice->discount);
         // WL_DUMP($invoice->discount);
         if ( isset($invoice->discount) && $invoice->discount == 0 ) {
-            if($invoice->invoice_header == 'RECEIPT'){
-                $fileTemplate = "template_without_discount_receipt.jpg";
-            }else{
-                $fileTemplate = "template_without_discount.jpg";
-            }
-            //$minHeight = floatval("-4.3");
+            $fileTemplate = "template_without_discount.jpg";
+            $minHeight = floatval("-4.3");
             $minHeightName = floatval("-4.85");
             $discount = 0;
         }
         else {
-            if($invoice->invoice_header == 'RECEIPT'){
-                $fileTemplate = "template_with_discount_receipt.jpg";
-            }else{
-                $fileTemplate = "template_with_discount.jpg";
-            }
+            $fileTemplate = "template_with_discount.jpg";
             $minHeight = 0;
             $minHeightName = 0;
             $discount = $invoice->discount;
-            if($invoice->quantity>1){
-                $invoice->price += ($invoice->discount/$invoice->quantity);
-            }
         }
      
         if($invoice->order_name!=null) {
@@ -92,21 +81,17 @@ class Pdf extends TCPDF
         // $pdf->SetDrawColor(0, 50, 0, 0);
         // $pdf->SetFillColor(0, 100, 0, 0);
         $pdf->SetTextColor(0, 0, 0); // Green
-        //$pdf->Text(142, "23.3",  $invoice->invoice_header);
+        $pdf->Text(142, "23.3",  $invoice->invoice_header);
         $pdf->SetTextColor(89, 0, 67, 16); // Green
-        $pdf->Text(58, "20", $invoice->id);
+        $pdf->Text(58, "22.7", $invoice->id);
         
         $pdf->Text(120, "34.3", "IDR");
-        if($invoice->quantity>1){
-            $pdf->MultiCell("41.5", "30.8", $this->convert_currency(($invoice->price * $invoice->quantity)-$discount), 1, "R", 1, 0, 154, "34.3");
-        }else{
-            $pdf->MultiCell("41.5", "30.8", $this->convert_currency($invoice->total-$discount), 1, "R", 1, 0, 154, "34.3");
-        }
+        $pdf->MultiCell("41.5", "30.8", $this->convert_currency($invoice->total-$discount), 1, "R", 1, 0, 154, "34.3");
         
         $pdf->SetFont($font, 'B', 8);
         $pdf->SetTextColor(0,0,0,100); //Black
         if ($invoice->invoice_header=="INVOICE" || $invoice->invoice_header=="Invoice"){
-            //$pdf->Text(15, "39.0", "Jatuh Tempo : ");
+            $pdf->Text(15, "39.0", "Jatuh Tempo : ");
             $pdf->Text(32, "39.0", date("d M Y \J\a\m H:i ", strtotime($invoice->due_date)));
         }
 
@@ -122,31 +107,16 @@ class Pdf extends TCPDF
         $pdf->MultiCell("70.5", "90.8", $invoice->description, 1, "L", 1, 0, "57.2", "77.8");
         $pdf->Text("128.4", "77.8", $this->convert_currency($invoice->price));        
 
-        if($invoice->quantity > 1){
-            $pdf->MultiCell("40.5", "30.8", $this->convert_currency($invoice->price*$invoice->quantity), 1, "R", 1, 0, "151.8", "77.8"); //"178.5", "75.8"
-        }else{
-            $pdf->MultiCell("40.5", "30.8", $this->convert_currency($invoice->total), 1, "R", 1, 0, "151.8", "77.8"); //"178.5", "75.8"
-        }
-        
-        if ( $discount > 0 ){
+        $pdf->MultiCell("40.5", "30.8", $this->convert_currency($invoice->total), 1, "R", 1, 0, "151.8", "77.8"); //"178.5", "75.8"
+        if ( $discount > 0 )
             $pdf->MultiCell("41.5", "30.8", $this->convert_currency($discount), 1, "R", 1, 0, "151.8", "148.5");
-        }
-        
-        if($invoice->quantity>1){
-            $pdf->MultiCell("41.5", "30.8", $this->convert_currency(($invoice->price * $invoice->quantity)-$discount), 1, "R", 1, 0, "151.8", floatval("152.9")+$minHeight );
-        }else{
-            $pdf->MultiCell("41.5", "30.8", $this->convert_currency($invoice->total-$discount), 1, "R", 1, 0, "151.8", floatval("152.9")+$minHeight );
-        }
+        $pdf->MultiCell("41.5", "30.8", $this->convert_currency($invoice->total-$discount), 1, "R", 1, 0, "151.8", floatval("152.9")+$minHeight );
         $pdf->MultiCell("41.5", "30.8", $invoice->tax, 1, "R", 1, 0, "151.8", floatval("157.4")+$minHeight);
         $pdf->SetFont($font, 'B', "10.65");
-        if($invoice->quantity>1){
-            $pdf->MultiCell("41.5", "30.8", $this->convert_currency(($invoice->price * $invoice->quantity)-$discount), 1, "R", 1, 0, "151.8", floatval("164.2")+$minHeight );
-        }else{
-            $pdf->MultiCell("41.5", "30.8", $this->convert_currency($invoice->total-$discount), 1, "R", 1, 0, "151.8", floatval("164.2")+$minHeight );
-        }
+        $pdf->MultiCell("41.5", "30.8", $this->convert_currency($invoice->total-$discount), 1, "R", 1, 0, "151.8", floatval("164.2")+$minHeight );
 
         $pdf->SetFont($font, 'B', "10.4");
-        //$pdf->MultiCell("51.5", "30.8", $invoice->name, 0, "C", 0, 0, "62.5", floatval("195.5")+$minHeightName); //
+        $pdf->MultiCell("51.5", "30.8", $invoice->name, 0, "C", 0, 0, "62.5", floatval("195.5")+$minHeightName); //
 
         // $pdf->Cell(0, 0, 'TEST CELL STRETCH: scaling', 1, 1, 'C', 0, '', 1);
         // $pdf->Cell(0, 0, 'TEST CELL STRETCH: force scaling', 1, 1, 'C', 0, '', 2);

@@ -76,8 +76,7 @@
                                                 <button type="button" class="btn btn-default btn-number"
                                                         data-type="minus"
                                                         data-field="<?php echo $inputName; ?>"
-                                                        onclick="DeleteForm()"
-                                                        
+                                                        onclick="DeleteForm('<?php echo $index; ?>')"
                                                         >
                                                     <span class="glyphicon glyphicon-minus"></span>
                                                 </button>
@@ -196,6 +195,7 @@
   var voucherAmount      = $('#voucher-amount');
   var voucherAmountText  = $('#voucher-amount-text');
   var voucherInputAlert  = $('#vocuher-input-alert');
+  var totalParticipant = 0;
 
   function numberWithThousandSeparator(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -205,23 +205,29 @@
     if (totalPrice) {
       var total = 0;
       var totalvoucher = 0;
+      var totalParticipant = 0;
+
       participantInput.each(function () {
         var price = $(this).data('price');
         var value = $(this).val();
 
         total += (price * value);
+        totalParticipant += parseInt(value,10);
+        
       });
-
-
-      if(participantInput.val()==0){
-        totalvoucher = voucherAmount.val();
+      //console.log(total);
+      //console.log(totalParticipant);
+      if(totalParticipant < 1){
+        totalvoucher += parseInt(voucherAmount.val());
       }else{
-        totalvoucher = voucherAmount.val()*participantInput.val();
+        totalvoucher += voucherAmount.val()*totalParticipant;
+        total -= totalvoucher;
       }
-      
+      //console.log(totalvoucher);
+
       voucherAmountText.html("- Rp. " + numberWithThousandSeparator(totalvoucher));
 
-      total -= voucherAmount.val()*participantInput.val();
+      //total -= voucherAmount.val()*participantInput.val();
 
       totalPrice.html("Rp. " + numberWithThousandSeparator(total));
     }
@@ -252,6 +258,7 @@
     });
 
     $.validator.addMethod("validVoucher", function (value) {
+      console.log(voucherInput.attr('valid '));
       if (voucherInput.is(":focus") || voucherInput.attr('valid')) {
         return true;
       }
@@ -344,7 +351,7 @@
     });
 
     voucherInputBtn.click(function() {
-      peponiForm.validate().element("#voucher-input");
+      peponiForm.validate();//.element("#voucher-input");
     });
 
     voucherInputBtn.trigger('click');
@@ -353,9 +360,9 @@
   
 function newForm() {
   vcount++;
-  console.log('voucherc = '+vcount);
+  //console.log('voucherc = '+vcount);
     var age = JSON.parse($('#productPrices').val());
-    console.log(age);
+    //console.log(age);
     var title = "Data Pemesanan";
     var deskripsi = "";
     if($('#form-pemesanan .panel-default').size()<=0){
@@ -432,18 +439,19 @@ function newForm() {
   `
     $('#form-pemesanan').append(element);
   }
-  function DeleteForm() {
-    vcount--;
-    console.log('voucherc = '+vcount);
-    console.log($('#form-pemesanan .panel-default').size());  
-    $('.panel-default')[$('#form-pemesanan .panel-default').size()-1].remove();
+  function DeleteForm(index) {
+    //console.log(index);
+    //console.log(participantInput[index].value);
+    if(participantInput[index].value > 0){
+      $('.panel-default')[$('#form-pemesanan .panel-default').size()-1].remove();
+    }
   }
   $('#peponiForm').submit(function(){
     var error = 0;
     $('#form-pemesanan .error-msg').html("");
     $('#form-pemesanan input').each(function(e){
         if($(this).val()==null||$(this).val()==""||$(this).val()==undefined){
-          console.log("kosong");
+          //console.log("kosong");
           $("#"+$(this).attr("header_id")+" .error-msg-"+$(this).attr("labels")).html("Harap isi");
           error=1;
         }

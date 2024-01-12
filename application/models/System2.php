@@ -305,14 +305,31 @@ class System2 extends CI_Model
         $this->send_email($invoiceData->order_id, $invoiceData->id,"", "invoice receipt", $filePdf, "#".$invoiceData->id." - Receipt.pdf");
     }
 
+    public function test_send_email(){
+        $this->email->to('roy.bagaskara@binus.edu');
+        $this->email->from("no-reply@peponitravel.com", "Peponitravel");
+        $this->email->subject('Subject of the email');
+        $this->email->message('This is the message body');
+        $email_sent = $this->email->send();
+        if ($email_sent) {
+            echo 'Email has been sent successfully';
+        } else {
+            echo 'Email could not be sent. Error: ' . $this->email->print_debugger();
+        }
+    }
+
     public function send_email($orderId, $invoiceId=null, $invoice_url=null,$emailType="reservation", $filePdf=null, $fileName=null, $alert = "")
     {
         // $this->load->library('email');
         // $email = new email();
+        $this->load->library('pdf');
+        $lib= new pdf();
         
         if ($alert != "") {
             $alert .= " ";
         }
+        $filePdfNextInvoice = null;
+        $filePdfNextinvoiceName = null;
         $orderData      = $this->getOrder($orderId);
         $orderDetail    = $this->getOrderDetail($orderId);
         // die("Invoice id " . $invoiceId);
@@ -330,7 +347,9 @@ class System2 extends CI_Model
         ];
 
         $emailParams = ["invoice_id" => $invoiceId, "email_type" => $emailType, "email" => $orderData->order_email];
+        $emailParamsInvoice = null;
         $checkEmailHistory = $this->getEmailLog($emailParams);
+        $tahappembayaran = ucwords($invoiceData->invoice_type);
 
         if (count($checkEmailHistory) <= 0) {
             if ($emailType == "reservation") {
@@ -344,37 +363,53 @@ class System2 extends CI_Model
                     $customerEmailView = $this->ci->load->view('email/v2/reservation_without_detail', $emailViewData, true);
                 }
             } elseif ($emailType == "invoice generate") {
-                $title = "#{$invoiceId} - Ini Rincian Tagihan Anda, Mohon Segera Lengkapi Pembayaran";
+                $title = "#{$invoiceId} - {$tahappembayaran} - Ini Rincian Tagihan Anda, Mohon Segera Lengkapi Pembayaran";
                 $customerEmailTitle = $title;
                 $adminEmailTitle = "Invoice sent H-7 Forward - Client " . $orderData->order_name . " - " . $title;
                 $customerEmailView   = $this->ci->load->view('email/v2/invoice_detail', $emailViewData, true);
             } elseif ($emailType == "invoice receipt") {
-                $title = "#{$invoiceId} - Terimakasih, Pembayaran Anda telah Berhasil";
+                $title = "#{$invoiceId} - {$tahappembayaran} - Terimakasih, Pembayaran Anda telah Berhasil";
                 $customerEmailTitle = $title;
                 $adminEmailTitle = "Pengiriman bukti pembayaran " . $orderData->order_name . " - " . $title;
+                
+                $nextInvoice = $this->getInvoices([
+                    "order_id"  => $orderId,
+                    "status"    => "0",
+                    "order_by"  => "In.due_date ASC",
+                    "limit"     => "1"
+                ]);
+                if($nextInvoice!=null){
+                    $nextInvoice->invoice_header = "INVOICE";
+                    $nextInvoice->order_name = $orderData->order_name;
+                    $filePdfNextInvoice = $lib->generate_pdf($nextInvoice, false);
+                    $filePdfNextinvoiceName = 'Invoice '.$nextInvoice->id;
+                    $nextInvoice->url_invoice = base_url().'pembayaran/'.$nextInvoice->id;
+                    $emailParamsInvoice = ["invoice_id" => $nextInvoice->id, "email_type" => 'invoice generate', "email" => $orderData->order_email];
+                    $emailViewData['next_invoice'] = $nextInvoice;
+                }
                 $customerEmailView   = $this->ci->load->view('email/v2/invoice_receipt', $emailViewData, true);
             } elseif ($emailType == "friendly reminder") {
-                $title = "#{$invoiceId} - Tagihan Anda akan jatuh tempo dalam 3 hari kedepan";
+                $title = "#{$invoiceId} - {$tahappembayaran} - Tagihan Anda akan jatuh tempo dalam 3 hari kedepan";
                 $customerEmailTitle = $title;
                 $adminEmailTitle = "Friendly Reminder H-3 Forward - Client " . $orderData->order_name . " - " . $title;
                 $customerEmailView   = $this->ci->load->view('email/v2/invoice_detail', $emailViewData, true);
             } elseif ($emailType == "due date") {
-                $title = "#{$invoiceId} - Tagihan Anda telah jatuh tempo";
+                $title = "#{$invoiceId} - {$tahappembayaran} - Tagihan Anda telah jatuh tempo";
                 $customerEmailTitle = $title;
                 $adminEmailTitle = "Due Date Notification Forward - Client " . $orderData->order_name . " - " . $title;
                 $customerEmailView   = $this->ci->load->view('email/v2/invoice_detail', $emailViewData, true);
             } elseif ($emailType == "first reminder") {
-                $title = "#{$invoiceId} - Tagihan Anda telah jatuh tempo [Peringatan Pertama]";
+                $title = "#{$invoiceId} - {$tahappembayaran} - Tagihan Anda telah jatuh tempo [Peringatan Pertama]";
                 $customerEmailTitle = $title;
                 $adminEmailTitle = "First Reminder H+3 Forward - Client " . $orderData->order_name . " - " . $title;
                 $customerEmailView   = $this->ci->load->view('email/v2/invoice_detail', $emailViewData, true);
             } elseif ($emailType == "second reminder") {
-                $title = "#{$invoiceId} - Tagihan Anda telah jatuh tempo [Peringatan Kedua]";
+                $title = "#{$invoiceId} - {$tahappembayaran} - Tagihan Anda telah jatuh tempo [Peringatan Kedua]";
                 $customerEmailTitle = $title;
                 $adminEmailTitle = "Se`con`d Reminder H+7 Forward - Client " . $orderData->order_name . " - " . $title;
                 $customerEmailView   = $this->ci->load->view('email/v2/invoice_detail', $emailViewData, true);
             } elseif ($emailType == "last reminder") {
-                $title = "#{$invoiceId} - Tagihan Anda telah jatuh tempo [Peringatan Terakhir]";
+                $title = "#{$invoiceId} - {$tahappembayaran} - Tagihan Anda telah jatuh tempo [Peringatan Terakhir]";
                 $customerEmailTitle = $title;
                 $adminEmailTitle = "Last Reminder H+10 Forward - Client " . $orderData->order_name . " - " . $title;
                 $customerEmailView   = $this->ci->load->view('email/v2/invoice_detail', $emailViewData, true);
@@ -389,10 +424,17 @@ class System2 extends CI_Model
             if ($filePdf != null) {
                 $attachResult=$this->email->attach($filePdf, 'attachment', $fileName);
             }
+            if ($filePdfNextInvoice != null) {
+                $attachResult=$this->email->attach($filePdfNextInvoice, 'attachment', $filePdfNextinvoiceName);
+            }
             $this->email->send();
       
         $emailParams["sent_date"] = date("Y-m-d H:m:s");
         $this->insertEmailLog($emailParams);
+        if($emailParamsInvoice != null){
+            $emailParamsInvoice["sent_date"] = date("Y-m-d H:m:s");
+            $this->insertEmailLog($emailParamsInvoice);
+        }
         $this->email->clear(true);
         //
         $this->email->to("financecontrol.peponitravel@gmail.com");
@@ -401,6 +443,9 @@ class System2 extends CI_Model
         $this->email->message($customerEmailView);
         if ($filePdf != null) {
             $attachResult=$this->email->attach($filePdf, 'attachment', $fileName);
+        }
+        if ($filePdfNextInvoice != null) {
+            $attachResult=$this->email->attach($filePdfNextInvoice, 'attachment', $filePdfNextinvoiceName);
         }
         $this->email->send();
         $this->email->clear(true);
@@ -807,7 +852,8 @@ class System2 extends CI_Model
                                     "add_payment" => true
                                 ],
                    "editor" => [],
-                   "peponi" => []];
+                   "peponi" => [],
+                    "roy" => []];
 
         $username = $this->session->userdata("admin_name");
         $raw_page = explode("_", $page);
@@ -874,20 +920,20 @@ class System2 extends CI_Model
             $od = $this->getOrder($invoiceData->order_id);
             $invoiceData->order_name = $od->order_name;
             $this->generateReceipt((object)$invoiceData);
-            $nextInvoice = $this->getInvoices([
-                    "order_id"  => $invoiceData->order_id,
-                    "status"    => "0",
-                    "order_by"  => "In.due_date ASC",
-                    "limit"     => "1"
-                ]);
+            // $nextInvoice = $this->getInvoices([
+            //         "order_id"  => $invoiceData->order_id,
+            //         "status"    => "0",
+            //         "order_by"  => "In.due_date ASC",
+            //         "limit"     => "1"
+            //     ]);
             
-            if (isset($nextInvoice->id)) {
-                $invoice = $nextInvoice;
-                $invoice->invoice_header ="INVOICE";
-                $invoice->order_name = $od->order_name;
-                $filePdf = $this->pdf->generate_pdf($invoice);
-                $this->send_email($invoice->order_id, $invoice->id,base_url()."pembayaran/".$invoice->id, "invoice generate", $filePdf, "Invoice $invoice->id - " . $invoice->title . ".pdf");
-            }
+            // if (isset($nextInvoice->id)) {
+            //     $invoice = $nextInvoice;
+            //     $invoice->invoice_header ="INVOICE";
+            //     $invoice->order_name = $od->order_name;
+            //     $filePdf = $this->pdf->generate_pdf($invoice);
+            //     $this->send_email($invoice->order_id, $invoice->id,base_url()."pembayaran/".$invoice->id, "invoice generate", $filePdf, "Invoice $invoice->id - " . $invoice->title . ".pdf");
+            // }
         } else {
             $data = array(  "title"     => "Add Payment Fail",
                             "message"   => "Please try again later. If problem still happen in a few minute, please contact your developer.",

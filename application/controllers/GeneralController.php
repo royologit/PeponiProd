@@ -123,19 +123,19 @@ class GeneralController extends CI_Controller {
 				$od = $this->system->getOrder($query[0]->order_id);
             	$query[0]->order_name = $od->order_name;
 				$this->system->generateReceipt((object)$query[0]);
-				$nextInvoice = $this->system->getInvoices([
-                    "order_id"  => $query[0]->order_id,
-                    "status"    => "0",
-                    "order_by"  => "In.due_date ASC",
-                    "limit"     => "1"
-                ]);
-				if (isset($nextInvoice->id)) {
-					$invoice = $nextInvoice;
-					$invoice->invoice_header = "INVOICE";
-					$invoice->order_name = $od->order_name;
-					$filePdf = $this->pdf->generate_pdf($invoice);
-					$this->system->send_email($invoice->order_id, $invoice->id,base_url()."pembayaran/".$invoice->id, "invoice generate", $filePdf, "Invoice $invoice->id - " . $invoice->title . ".pdf");
-				}
+				// $nextInvoice = $this->system->getInvoices([
+                //     "order_id"  => $query[0]->order_id,
+                //     "status"    => "0",
+                //     "order_by"  => "In.due_date ASC",
+                //     "limit"     => "1"
+                // ]);
+				// if (isset($nextInvoice->id)) {
+				// 	$invoice = $nextInvoice;
+				// 	$invoice->invoice_header = "INVOICE";
+				// 	$invoice->order_name = $od->order_name;
+				// 	$filePdf = $this->pdf->generate_pdf($invoice);
+				// 	$this->system->send_email($invoice->order_id, $invoice->id,base_url()."pembayaran/".$invoice->id, "invoice generate", $filePdf, "Invoice $invoice->id - " . $invoice->title . ".pdf");
+				// }
 			}
 			else{
 				if($query[0]->invoice_type=="down payment"){
@@ -153,7 +153,68 @@ class GeneralController extends CI_Controller {
 	}
 	public function testingEmail()
 	{
-		
+		// echo (1000000*4)+(7000000*4)+(5000000*4)+(5160000*4);
+		// echo '<br>';
+		// echo 19840000/4;
+		//$invoiceid = $emailViewData['Tagihan_Berikutnya']-;
+		//$emailViewData['Tagihan_Berikutnya'] = $nextInvoice;
+		$query = $this->db->where('external_id','INV-1704183543')->get("invoices")->result();
+		$orderData      = $this->system->getOrder($query[0]->order_id);
+        $orderDetail    = $this->system->getOrderDetail($query[0]->order_id);
+		$invoiceData    = $this->system->getInvoices(array("invoice_id" => $query[0]->id));
+		$nextInvoice = $this->system->getInvoices([
+			"order_id"  => $query[0]->order_id,
+			"status"    => "0",
+			"order_by"  => "In.due_date ASC",
+			"limit"     => "1"
+		]);
+		if($nextInvoice!=null){
+			$nextInvoice->url_invoice = 'pembayaran/'.$nextInvoice->id;
+		}
+		//$invoiceData    = $this->system->getInvoices(array("invoice_id" => $nextInvoice->id));
+		$emailViewData = [
+            'orderData'         => $orderData,
+			'orderDetail'       => $orderDetail,
+			'invoiceData'       => $invoiceData,
+			'url_invoice'       => 'pembayaran/'.$invoiceData->id
+		];
+
+		$emailViewData['next_invoice'] = $nextInvoice;
+	
+		//var_dump($query);
+		//var_dump($emailViewData);
+
+
+		// check cron
+		// $pattern = [    "-7"    => "invoice generate",
+		// "-3"    => "friendly reminder",
+		// "0"     => "due date",
+		// "3"     => "first reminder",
+		// "7"     => "second reminder",
+		// "10"    => "last reminder"];
+		// $params = [ "status" => 0 ];
+		// $invoiceData2 = $this->system->getInvoices($params);
+		// foreach ($invoiceData2 as $invoice) {
+		// $days = GET_DIFF_DAYS($invoice->due_date);
+		// foreach ($pattern as $remind_days => $email_type) {
+		// 		if ($days == intval($remind_days)) {
+		// 			echo "Invoice no $invoice->id, Days $days Remind Days $remind_days <br>";
+		// 			$invoice->invoice_header = "INVOICE";
+		// 			$filePdf = $this->pdf->generate_pdf($invoice);
+		// 			//$this->system2->send_email($invoice->order_id, $invoice->id,base_url()."pembayaran/".$invoice->id, $email_type, $filePdf, "Invoice $invoice->id - " . $invoice->title . ".pdf");
+		// 		} else {
+		// 			//echo "Invoice no $invoice->id, Due date $invoice->due_date. Diff Days $days. Pattern $remind_days not match. Skip!<br>";
+		// 		}
+		// 	}
+		// }
+		// echo $days;
+		// var_dump($invoiceData2);
+		//die();
+
+		$this->load->view('email/v2/reservation_with_detail',$emailViewData);
+	}
+	public function test_send_email(){
+		$this->system->test_send_email();
 	}
 	public function checkout($invoice_id)
 	{
