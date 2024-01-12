@@ -52,7 +52,8 @@
                             <td><?php echo $invoice->quantity ?></td>
                             <td><?php echo $invoice->price ?></td>
                             <td><?php echo $invoice->discount ?></td>
-                            <td><?php echo ($invoice->price - $invoice->discount) ?></td>
+                            <!-- <td><?php echo ($invoice->price - $invoice->discount) ?></td> -->
+                            <td><?php echo $invoice->total ?></td>
                             <td><?php echo ($invoice->status == 0)? "Unpaid": "Paid"; ?>
                             <td><?php echo $invoice->due_date ?></td>
                             <td><?php echo $invoice->created_date ?></td>
