@@ -66,6 +66,7 @@
         @media only screen and (max-width: 600px) {
             #btn-lanjutkan {
                 width: 100% !important;
+                margin-bottom: 50px;
             }
             div.radio-with-Icon p.radioOption-Item {
                 display: inline-block;
@@ -222,7 +223,7 @@ $.widget.bridge('uibutton', $.ui.button);
 <!-- Slimscroll -->
 <script src="<?php echo bower_url(); ?>/AdminLTE/plugins/slimScroll/jquery.slimscroll.min.js"></script>
 <!-- FastClick -->
-<script src="<?php echo bower_url(); ?>/AdminLTE/plugins/fastclick/fastclick.js"></script>
+<!-- <script src="<?php echo bower_url(); ?>/AdminLTE/plugins/fastclick/fastclick.js"></script> -->
 <!-- jQuery Datatable -->
 <script src="<?php echo bower_url(); ?>/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="<?php echo bower_url(); ?>/AdminLTE/plugins/datatables/dataTables.bootstrap.min.js"></script>

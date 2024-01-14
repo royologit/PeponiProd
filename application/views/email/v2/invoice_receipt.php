@@ -191,7 +191,7 @@
             Diskon: Rp. <?= CONVERT_TO_CURRENCY($next_invoice->discount) ?><br />
         <?php } ?>
         Total Tagihan: Rp. <?= CONVERT_TO_CURRENCY($next_invoice->total-$next_invoice->discount) ?><br/>
-        Jatuh Tempo pada <b><?= date("d M Y \J\a\m 13:00 T", strtotime($invoiceData->due_date)) ?></b><br/>
+        Jatuh Tempo pada <b><?= date("d M Y \J\a\m 13:00 T", strtotime($next_invoice->due_date)) ?></b><br/>
         <br/>
         <p>
             <a href="<?=$next_invoice->url_invoice?>" class="bayar-sekarang">Bayar Sekarang</a>
